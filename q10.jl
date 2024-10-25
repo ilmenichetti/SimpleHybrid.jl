@@ -1,6 +1,6 @@
 using Flux
 
-# Define helper function to create RUE and Rb models
+# Define helper function to create RUE and Rb models with Nnets
 function Dense_RUE_Rb(in_dim; neurons=15, out_dim=1, affine=true)
     # This function initializes a neural network with the following architecture:
     # - A Batch Normalization layer on the input features
@@ -42,9 +42,10 @@ end
 
 # Define model struct
 struct FluxPartModel_Q10
-    RUE_chain::Flux.Chain
+    RUE_chain::Flux.Chain #type `Flux.Chain`, a sequence of layers. This contains the actual Nnet and it is an object specific to Fluz. Layers are not the same structure.
+                          # for example we could have a (dense) layer with 5 inputs, 6 outputs, and a certain activator, and another with 2 inputs, 8 outputs and another activator
     Rb_chain::Flux.Chain
-    Q10::Vector{Float32}
+    Q10::Vector{Float32} #vector of 32-bit floating-point numbers (Float32) (in this case representing Q10 values)
 end
 
 # Basic constructor for `FluxPartModel_Q10`
