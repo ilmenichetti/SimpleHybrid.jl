@@ -16,13 +16,14 @@ function Dense_RUE_Rb(in_dim; neurons=15, out_dim=1, affine=true)
     # - `affine`: Determines if the BatchNorm layer includes learnable affine parameters (defaults to true).
 
     return Flux.Chain(
+        
         # Batch Normalization layer on input features
         # Normalizes the input data for faster convergence, with an option for learnable parameters.
         # affine comes from the main function container, default is true. If true, normalization includes "learnable affine transformation parameters", which applies scaling and shifting. 
         # this causes the main function to have two more hyperparameters, scaling and bias, for the normalization
         BatchNorm(in_dim, affine=affine),
         
-        # dense layers:  a dense layer is a layer in a neural network where every neuron is connected to every neuron in the preceding layer. 
+        # what is a dense layer:  a dense layer is a layer in a neural network where every neuron is connected to every neuron in the preceding layer. 
         # For some reasons Reichstein decided for dense layers.
 
         # Hidden Dense layer:
@@ -50,12 +51,13 @@ struct FluxPartModel_Q10
     Rb_chain::Flux.Chain
 
     Q10::Vector{Float32} #vector of 32-bit floating-point numbers (Float32) (in this case representing Q10 values)
-    # ┌─────────────────────────────────────────────────────────────┐
-    # │ !!! NOTE: Modified from original code.                      │
-    # │ Julia accepts type-flexible fields, but without specifying  │
-    # │ `Q10::Vector{Float32}`, Flux’s `@functor` would not detect  │
-    # │ `Q10` as a trainable parameter for `train!`.                │
-    # └─────────────────────────────────────────────────────────────┘
+    # ┌────────────────────────────────────────────────────────────────┐
+    # │ !!! NOTE: Modified from original code, where Q10 was undefined.│
+    # │ Julia is a dynamically typed language.                         │
+    # │ It accepts type-flexible fields, but without specifying        │
+    # │ `Q10::Vector{Float32}`, Flux’s `@functor` would not detect     │
+    # │ `Q10` as a trainable parameter for `train!`.                   │
+    # └────────────────────────────────────────────────────────────────┘
 end
 
 # This function initializes a new FluxPartModel_Q10 object with specific values for Q10 and neurons.
@@ -121,7 +123,7 @@ function (m::FluxPartModel_Q10)(dk) # this syntax overloads this part onto the p
     return (; NEE = Reco - GPP)
 end
 
-# Allow the model to work with Flux's `train!` function
+# Allows the model to work with Flux's `train!` function
 # The @functor macro tells Flux how to access and update the fields in FluxPartModel_Q10 (e.g., RUE_chain, Rb_chain, and Q10) during training. 
 # This is important because train! relies on accessing the model's parameters to compute gradients and perform updates.
 # Specifically, @functor marks which fields in the struct should be treated as model parameters, allowing them to be optimized by Flux’s training routines.
