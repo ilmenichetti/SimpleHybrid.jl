@@ -8,6 +8,7 @@ using DataFrames
 
 # Include model and data generation functions
 include("q10.jl") 
+include("syntetic_data.jl") 
 
 # Generate test data
 dk = gen_dk()
