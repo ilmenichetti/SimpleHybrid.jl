@@ -13,7 +13,7 @@ function Dense_RUE_Rb(in_dim; neurons=15, out_dim=1, affine=true)
     # - `in_dim`: (integer) refers to the dimensions of the covariates as input for the Nnet, could be for example 1 for a single variable
     # - `neurons`: Number of neurons in the hidden layer (defaults to 15).
     # - `out_dim`: Number of output neurons (defaults to 1).
-    # - `affine`: Determines if the BatchNorm layer includes learnable affine parameters (defaults to true).
+    # - `affine`: Determines if the BatchNorm layer includes learnable "affine" (whatever that means) parameters (defaults to true).
 
     return Flux.Chain(
         
