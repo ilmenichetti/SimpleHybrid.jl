@@ -107,8 +107,10 @@ function (m::FluxPartModel_Q10)(dk) # this syntax overloads this part onto the p
     # Pass the inputs through RUE_chain and Rb_chain NNet models
         # `m.RUE_chain(RUE_input)` produces RUE predictions, taking the first output after transposing
         RUE = m.RUE_chain(RUE_input)[:, 1]  #RUE (Radiative Use Efficiency)
+        println("RUE output: ", RUE) #debug line to print the output
         # `m.Rb_chain(Rb_input)` produces Rb predictions, scaled by 100.0f0 to represent baseline respiration
         Rb = 100.0f0 * m.Rb_chain(Rb_input)[:, 1]  #Rb (Respiration or Basal Respiration)
+        println("Rb output: ", Rb) #debug line to print the output
 
     # Access additional environmental variables by their fixed indices in `dk`
     sw_in = dk[5, :] 
@@ -117,7 +119,14 @@ function (m::FluxPartModel_Q10)(dk) # this syntax overloads this part onto the p
     # Calculate GPP and Reco
     GPP = sw_in .* RUE ./ 12.011f0
     Reco = Rb .* m.Q10[1] .^ (0.1f0 * (ta .- 15.0f0))
+    #println("GPP: ", GPP) #debug line to print the output
+    #println("Reco: ", Reco) #debug line to print the output
+    #println("sw_in: ", sw_in)  # debug line to print the output
+    #println("ta: ", ta)        # debug line to print the output
+    #println("Q10: ", m.Q10)    # debug line to print the output
     
+
+
     # Return the result as a named tuple, where NEE (Net Ecosystem Exchange) is the difference between Reco and GPP
     # A named tuple is  immutable collection with labeled elements, accessible by their names.
     return (; NEE = Reco - GPP)

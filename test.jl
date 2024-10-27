@@ -81,6 +81,8 @@ end
 
 println("Final Q10 values: ", model.Q10)
 
+
+
 # Test what model_output produces for a given input
 sample_input = Array(parent(dk[:, 1]))  # Convert to plain array
 
@@ -90,7 +92,6 @@ println("Reshaped sample input size: ", size(sample_input))
 
 output = model_output(sample_input)
 
-# there's a problem, model output is NA!!!
 
 # questios still open:
 # - hyperparameter tuning (hopefully not needed because that's another level of complexity...)
