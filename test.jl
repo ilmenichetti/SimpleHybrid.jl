@@ -95,8 +95,46 @@ output = model_output(sample_input)
 
 # questios still open:
 # - hyperparameter tuning (hopefully not needed because that's another level of complexity...)
-# - How to query the Nnet for getting the importance of the features?
+# - How to query the Nnet for getting the importance of the features? Permutations, probably.
 
 
 
+###### draft of a possible permutation algorithm for feature importance. It doesn't work yet, and might be because of syntetic data, but it runs
 
+# Extract the underlying plain array from `dk`
+dk_data = Array(dk)
+
+using Random
+
+function permutation_importance(model, data, targets; metric = Flux.mse, n_repeats = 10)
+    # Extract the NEE component from targets
+    targets_data = targets.NEE
+
+    # Calculate baseline performance using only the NEE component
+    baseline_score = metric(model(data).NEE, targets_data)
+
+    # Initialize importance scores for each feature
+    importances = zeros(size(data, 1))
+
+    for feature in 1:size(data, 1)
+        scores = Float64[]
+
+        for _ in 1:n_repeats
+            # Shuffle the selected feature across all samples
+            shuffled_data = copy(data)
+            shuffle!(shuffled_data[feature, :])
+
+            # Evaluate performance with the shuffled feature, using only NEE from model output
+            score = metric(model(shuffled_data).NEE, targets_data)
+            push!(scores, score)
+        end
+
+        # Calculate the average change in score due to feature shuffling
+        importances[feature] = mean(scores) - baseline_score
+    end
+
+    return importances
+end
+
+# Example usage
+importance_scores = permutation_importance(model, dk_data, baseline_targets)
